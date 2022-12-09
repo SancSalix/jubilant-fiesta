@@ -30,6 +30,8 @@
           authorization: "sandbox_f252zhq7_hh4cpc39zq4rgjcg",
         };
 
+        var name = "fake Name"
+
 
         braintree.client.create(createOptions) 
         .then((instance) => {
@@ -82,8 +84,8 @@
        document.querySelector('#spinner').style.display = 'none';
 
         // Pre-polulate the name field, if we're passed a name
-        if (window.xprops.prefilledName) {
-            document.querySelector('#venmoName').value = window.xprops.prefilledName;
+        if (name) {
+            document.querySelector('#venmoName').value = name;
         }
 
         // Handle the button click to launch venmo
@@ -122,8 +124,8 @@
                 })
                 .finally(function() {
                     // Since we had a successful venmo launch, call-back the parent page to let them know name of user launch venmo:
-                    window.xprops.onVenmoLaunch(venmoName);
-                    window.xprops.close();
+                    // window.xprops.onVenmoLaunch(venmoName);
+                    // window.xprops.close();
 
                     // Hide the loading spinner
                     document.querySelector('#spinner').style.display = 'none';
