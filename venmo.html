@@ -1,0 +1,121 @@
+<head>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.2/bootstrap-material-design.css" />
+    <link rel="stylesheet" href="./venmo.css" />
+
+    <!-- Pull in zoid and the venmo component we defined -->
+    <script src="./zoid.js"></script>
+    <script src="./venmo.js"></script>
+    <script src="https://js.braintreegateway.com/web/3.85.3/js/client.min.js"></script>
+    <script src="https://js.braintreegateway.com/web/3.85.3/js/venmo.min.js"></script>
+    <script src="https://js.braintreegateway.com/web/3.85.3/js/data-collector.min.js"></script>
+</head>
+
+<body>
+
+    <!-- Set up a venmo form -->
+    <form id="venmoForm">
+        <input id="venmoName" type="text" placeholder="name"/>
+        <br />
+        <button id="venmoButton" class="btn btn-primary">Launch Venmo</button>
+    </form>
+    <p id="log"></p>
+
+    <svg id="spinner" class="spinner" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+        <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+    </svg>
+
+    <script>
+      var createOptions = {
+          authorization: "sandbox_f252zhq7_hh4cpc39zq4rgjcg",
+        };
+
+      var _instance = null;
+
+      if (window && window.xprops && window.popupBridge) {
+        // if popup bridge is detected, we set the deepLinkReturnUrl param
+        // so that the Venmo app knows to app switch back to the app hosting
+        // the webview, instead of the url inside of the webview
+        createOptions.deepLinkReturnUrl =
+          window.popupBridge.getReturnUrlPrefix();
+
+        console.debug('deepLinkReturnUrl: ', createOptions.deepLinkReturnUrl);
+
+        // the Braintree SDK is waiting for the hash in the url to change,
+        // normally the Venmo app switches back to the window and updates
+        // the hash along with it, but since we're instructing Venmo to
+        // return to the app that _hosts_ the webview via the specified
+        // deep link return url, we have to manually update the hash of
+        // the webview's url with the hash popup bridge receives from
+        // the Venmo app upon completion
+        window.popupBridge.onComplete = function (err, payload) {
+          console.log("popupbridge completed");
+          console.log(err);
+          console.log(payload);
+          window.location.hash = payload.hash;
+        };
+      }
+
+      if (braintree.venmo.isBrowserSupported()) {
+            braintree.venmo.create(createOptions)
+        .then((instance) => {
+            _instance = instance;
+            console.log('venmo created');
+        })
+        .catch((err) => console.log('venmo create error: ', err));
+      }
+
+      // Hide the loading spinner by default
+       document.querySelector('#spinner').style.display = 'none';
+
+        // Pre-polulate the name field, if we're passed a name
+        if (window.xprops.prefilledName) {
+            document.querySelector('#venmoName').value = window.xprops.prefilledName;
+        }
+
+        // Handle the button click to launch venmo
+        var venmoButton = document.querySelector('#venmoButton');
+        venmoButton.addEventListener('click', function(event) {
+            venmoButton.setAttribute('disabled', 'disabled');
+
+            var log = document.getElementById("log");
+            var venmoName = document.querySelector('#venmoName').value;
+
+            //show spinner
+            document.querySelector('#spinner').style.display = 'inline-block';
+
+            _instance && _instance
+                .tokenize()
+                .then(function (payload) {
+                    console.log('venmo payload is: ', payload);
+                    log.innerText = JSON.stringify(payload, null, 2);
+                })
+                .catch(function (tokenizeErr) {
+                    // Handle flow errors or premature flow closure
+                    switch (tokenizeErr.code) {
+                        case 'VENMO_APP_CANCELED':
+                            console.log('User canceled Venmo flow.');
+                            break;
+                        case 'VENMO_CANCELED':
+                            console.log('User canceled Venmo, or Venmo app is not available.');
+                            break;
+                        default:
+                            console.error('Error!', tokenizeErr);
+                    }
+                    log.innerText = tokenizeErr.message;
+                })
+                .then(function () {
+                    venmoButton.removeAttribute('disabled');
+                })
+                .finally(function() {
+                    // Since we had a successful venmo launch, call-back the parent page to let them know name of user launch venmo:
+                    window.xprops.onVenmoLaunch(venmoName);
+                    window.xprops.close();
+
+                    // Hide the loading spinner
+                    document.querySelector('#spinner').style.display = 'none';
+                });
+        });
+    </script>
+
+</body>

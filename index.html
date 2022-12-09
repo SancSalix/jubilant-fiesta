@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.2/bootstrap-material-design.css" />
+    <link rel="stylesheet" href="./index.css" />
+
+    <script src="./zoid.js"></script>
+    <script src="./venmo.js"></script>
+</head>
+
+<body>
+
+    <h3>TM Venmo Demo</h3>
+
+    <div id="container"></div>
+
+    <div id="result"></div>
+
+    <script>
+
+        // Render the component
+
+        MyVenmoZoidComponent({
+
+            prefilledName: 'Joe Smith',
+
+            onVenmoLaunch: function(name) {
+                console.log('User logged in with name:', name);
+                document.querySelector('#result').innerText = name + ' launched venmo!';
+            }
+
+        }).render('#container');
+
+    </script>
+
+</body>
