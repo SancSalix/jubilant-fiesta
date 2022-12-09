@@ -30,7 +30,18 @@
           authorization: "sandbox_f252zhq7_hh4cpc39zq4rgjcg",
         };
 
+
+        braintree.client.create(createOptions) 
+        .then((instance) => {
+            _instance = instance;
+            console.log('client created');
+        })
+        .catch((err) => console.log('client create error: ', err));
+      
+
       var _instance = null;
+
+      console.log("getting venmo set up")
 
       if (window && window.xprops && window.popupBridge) {
         // if popup bridge is detected, we set the deepLinkReturnUrl param
@@ -55,6 +66,8 @@
           window.location.hash = payload.hash;
         };
       }
+
+      console.log("after popup bridge check")
 
       if (braintree.venmo.isBrowserSupported()) {
             braintree.venmo.create(createOptions)
