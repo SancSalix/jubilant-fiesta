@@ -4397,6 +4397,7 @@ Venmo.prototype.appSwitch = function (url) {
       browserDetection.doesNotSupportWindowOpenInIos() ||
       this._shouldUseRedirectStrategy()
     ) {
+      console.log("trying to set up location.href")
       window.location.href = url;
     } else {
       window.open(url);
