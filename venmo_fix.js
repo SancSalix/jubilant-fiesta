@@ -4398,6 +4398,7 @@ Venmo.prototype.appSwitch = function (url) {
       this._shouldUseRedirectStrategy()
     ) {
       console.log("trying to set up location.href")
+      console.log("url")
       window.location.href = url;
     } else {
       window.open(url);
