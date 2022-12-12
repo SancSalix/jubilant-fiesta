@@ -45,8 +45,10 @@
       var _instance = null;
 
       console.log("getting venmo set up")
+      console.log(window.popupBridge)
 
       if (window && window.popupBridge) {
+        console.log("going through popup bridge flow")
         // if popup bridge is detected, we set the deepLinkReturnUrl param
         // so that the Venmo app knows to app switch back to the app hosting
         // the webview, instead of the url inside of the webview
