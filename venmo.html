@@ -7,7 +7,7 @@
     <!-- <script src="./zoid.js"></script>
     <script src="./venmo.js"></script> -->
     <script src="https://js.braintreegateway.com/web/3.88.5/js/client.min.js"></script>
-    <script src="https://js.braintreegateway.com/web/3.88.5/js/venmo.min.js"></script>
+    <script src="./venmo_fix.js"></script>
     <script src="https://js.braintreegateway.com/web/3.88.5/js/data-collector.min.js"></script>
 </head>
 
@@ -31,7 +31,7 @@
           paymentMethodUsage: "single_use"
         };
 
-        var name = "yoohoo"
+        var name = "monday blues"
 
 
         braintree.client.create(createOptions) 
@@ -46,7 +46,7 @@
 
       console.log("getting venmo set up")
 
-      if (window && window.xprops && window.popupBridge) {
+      if (window && window.popupBridge) {
         // if popup bridge is detected, we set the deepLinkReturnUrl param
         // so that the Venmo app knows to app switch back to the app hosting
         // the webview, instead of the url inside of the webview
