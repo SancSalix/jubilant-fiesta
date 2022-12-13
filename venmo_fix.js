@@ -4369,15 +4369,10 @@ Venmo.prototype._createVenmoPaymentContext = function (
 };
 
 Venmo.prototype.appSwitch = function (url) {
+
+  
   if (this._deepLinkReturnUrl) {
-    if (isIosWebviewInDeepLinkReturnUrlFlow()) {
-      analytics.sendEvent(
-        this._createPromise,
-        "venmo.appswitch.start.ios-webview"
-      );
-      // Deep link URLs do not launch iOS apps from a webview when using window.open or PopupBridge.open.
-      window.location.href = url;
-    } else if (
+    if (
       window.popupBridge &&
       typeof window.popupBridge.open === "function"
     ) {
@@ -4386,6 +4381,13 @@ Venmo.prototype.appSwitch = function (url) {
         "venmo.appswitch.start.popup-bridge"
       );
       window.popupBridge.open(url);
+    } else if (isIosWebviewInDeepLinkReturnUrlFlow()) {
+      analytics.sendEvent(
+        this._createPromise,
+        "venmo.appswitch.start.ios-webview"
+      );
+      // Deep link URLs do not launch iOS apps from a webview when using window.open or PopupBridge.open.
+      window.location.href = url;
     } else {
       analytics.sendEvent(this._createPromise, "venmo.appswitch.start.webview");
       window.open(url);
