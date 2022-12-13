@@ -48,11 +48,13 @@
   </svg>
 
   <script>
-    document.querySelector("#venmoName").value = "tues blue";
+    document.querySelector("#venmoName").value = "tues pink";
 
     document
       .getElementById("start-sdk-button")
       .addEventListener("click", () => {
+        console.log("popup bridge does exist?");
+        console.log(window.popupBridge);
         startBTSDK();
       });
 
