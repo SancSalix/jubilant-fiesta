@@ -1,62 +1,81 @@
 <head>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.2/bootstrap-material-design.css"
+  />
+  <link rel="stylesheet" href="./venmo.css" />
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.2/bootstrap-material-design.css" />
-    <link rel="stylesheet" href="./venmo.css" />
-
-    <!-- Pull in zoid and the venmo component we defined -->
-    <!-- <script src="./zoid.js"></script>
+  <!-- Pull in zoid and the venmo component we defined -->
+  <!-- <script src="./zoid.js"></script>
     <script src="./venmo.js"></script> -->
-    <script src="https://js.braintreegateway.com/web/3.88.5/js/client.min.js"></script>
-    <script src="./venmo_fix.js"></script>
-    <script src="https://js.braintreegateway.com/web/3.88.5/js/data-collector.min.js"></script>
+  <script src="https://js.braintreegateway.com/web/3.88.5/js/client.min.js"></script>
+  <script src="./venmo_fix.js"></script>
+  <script src="https://js.braintreegateway.com/web/3.88.5/js/data-collector.min.js"></script>
 </head>
 
 <body>
+  <button id="start-sdk-button">Initialize SDK</button>
 
-    <!-- Set up a venmo form -->
-    <form id="venmoForm">
-        <input id="venmoName" type="text" placeholder="name"/>
-        <br />
-        <button id="venmoButton" class="btn btn-primary">Launch Venmo</button>
-        <a href="https://venmo.com/braintree/checkout?resource_id=cGF5bWVudGNvbnRleHRfaGg0Y3BjMzl6cTRyZ2pjZyMwMzVhODQ0MC0zYjgzLTQ5OWYtYmQ5Yy1kNjcyZWZhNWRjMDY%3D&x-success=NOOP&x-cancel=NOOP&x-error=NOOP&allowAndroidRecreation=1&ua=Mozilla%2F5.0%20(iPhone%3B%20CPU%20iPhone%20OS%2016_1_2%20like%20Mac%20OS%20X)%20AppleWebKit%2F605.1.15%20(KHTML%2C%20like%20Gecko)%20Mobile%2F15E148&braintree_merchant_id=1953896702662410263&braintree_access_token=access_token%24sandbox%2438kx88m8y5bf27c6%24ac3cdf777d0f9811ff18e9b5151f45e4&braintree_environment=sandbox&braintree_sdk_data=eyJfbWV0YSI6eyJ2ZXJzaW9uIjoiMy44OC41IiwiaW50ZWdyYXRpb24iOiJjdXN0b20iLCJwbGF0Zm9ybSI6IndlYiIsInNlc3Npb25JZCI6IjRlYjVjZDllLWFjZTItNDZjMy04MWYxLWMxYjkwNTIxM2QzMiJ9fQ%3D%3D">Venmo Link in iFrame</a>
-    </form>
-    <p id="log"></p>
+  <!-- Set up a venmo form -->
+  <form id="venmoForm">
+    <input id="venmoName" type="text" placeholder="name" />
+    <br />
+    <button id="venmoButton" class="btn btn-primary">Launch Venmo</button>
+    <a
+      href="https://venmo.com/braintree/checkout?resource_id=cGF5bWVudGNvbnRleHRfaGg0Y3BjMzl6cTRyZ2pjZyMwMzVhODQ0MC0zYjgzLTQ5OWYtYmQ5Yy1kNjcyZWZhNWRjMDY%3D&x-success=NOOP&x-cancel=NOOP&x-error=NOOP&allowAndroidRecreation=1&ua=Mozilla%2F5.0%20(iPhone%3B%20CPU%20iPhone%20OS%2016_1_2%20like%20Mac%20OS%20X)%20AppleWebKit%2F605.1.15%20(KHTML%2C%20like%20Gecko)%20Mobile%2F15E148&braintree_merchant_id=1953896702662410263&braintree_access_token=access_token%24sandbox%2438kx88m8y5bf27c6%24ac3cdf777d0f9811ff18e9b5151f45e4&braintree_environment=sandbox&braintree_sdk_data=eyJfbWV0YSI6eyJ2ZXJzaW9uIjoiMy44OC41IiwiaW50ZWdyYXRpb24iOiJjdXN0b20iLCJwbGF0Zm9ybSI6IndlYiIsInNlc3Npb25JZCI6IjRlYjVjZDllLWFjZTItNDZjMy04MWYxLWMxYjkwNTIxM2QzMiJ9fQ%3D%3D"
+      >Venmo Link in iFrame</a
+    >
+  </form>
+  <p id="log"></p>
 
-    <svg id="spinner" class="spinner" width="65px" height="65px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
-        <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
-    </svg>
+  <svg
+    id="spinner"
+    class="spinner"
+    width="65px"
+    height="65px"
+    viewBox="0 0 66 66"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle
+      class="path"
+      fill="none"
+      stroke-width="6"
+      stroke-linecap="round"
+      cx="33"
+      cy="33"
+      r="30"
+    ></circle>
+  </svg>
 
-    <script>
+  <script>
+    document.querySelector("#venmoName").value = "tues blue";
+
+    document
+      .getElementById("start-sdk-button")
+      .addEventListener("click", () => {
+        startBTSDK();
+      });
+
+    function startBTSDK() {
       var createOptions = {
-          authorization: "sandbox_f252zhq7_hh4cpc39zq4rgjcg",
-          paymentMethodUsage: "single_use"
-        };
-
-        var name = "thurs indigo"
-
-
-        braintree.client.create(createOptions) 
-        .then((instance) => {
-            _instance = instance;
-            console.log('client created');
-        })
-        .catch((err) => console.log('client create error: ', err));
-      
+        authorization: "sandbox_f252zhq7_hh4cpc39zq4rgjcg",
+        paymentMethodUsage: "single_use",
+      };
 
       var _instance = null;
 
-      console.log("getting venmo set up")
-      console.log(window.popupBridge)
+      console.log("getting venmo set up");
+      console.log(window.popupBridge);
 
       if (window && window.popupBridge) {
-        console.log("going through popup bridge flow")
+        console.log("going through popup bridge flow");
         // if popup bridge is detected, we set the deepLinkReturnUrl param
         // so that the Venmo app knows to app switch back to the app hosting
         // the webview, instead of the url inside of the webview
         createOptions.deepLinkReturnUrl =
           window.popupBridge.getReturnUrlPrefix();
 
-        console.debug('deepLinkReturnUrl: ', createOptions.deepLinkReturnUrl);
+        console.debug("deepLinkReturnUrl: ", createOptions.deepLinkReturnUrl);
 
         // the Braintree SDK is waiting for the hash in the url to change,
         // normally the Venmo app switches back to the window and updates
@@ -73,68 +92,67 @@
         };
       }
 
-      console.log("after popup bridge check")
+      console.log("after popup bridge check");
 
       if (braintree.venmo.isBrowserSupported()) {
-            braintree.venmo.create(createOptions)
-        .then((instance) => {
+        braintree.venmo
+          .create(createOptions)
+          .then((instance) => {
             _instance = instance;
-            console.log('venmo created');
-        })
-        .catch((err) => console.log('venmo create error: ', err));
+            console.log("venmo created");
+          })
+          .catch((err) => console.log("venmo create error: ", err));
       }
 
       // Hide the loading spinner by default
-       document.querySelector('#spinner').style.display = 'none';
+      document.querySelector("#spinner").style.display = "none";
 
-        // Pre-polulate the name field, if we're passed a name
-        if (name) {
-            document.querySelector('#venmoName').value = name;
-        }
+      // Handle the button click to launch venmo
+      var venmoButton = document.querySelector("#venmoButton");
+      venmoButton.addEventListener("click", function (event) {
+        venmoButton.setAttribute("disabled", "disabled");
 
-        // Handle the button click to launch venmo
-        var venmoButton = document.querySelector('#venmoButton');
-        venmoButton.addEventListener('click', function(event) {
-            venmoButton.setAttribute('disabled', 'disabled');
+        var log = document.getElementById("log");
+        var venmoName = document.querySelector("#venmoName").value;
 
-            var log = document.getElementById("log");
-            var venmoName = document.querySelector('#venmoName').value;
+        //show spinner
+        document.querySelector("#spinner").style.display = "inline-block";
 
-            //show spinner
-            document.querySelector('#spinner').style.display = 'inline-block';
+        _instance &&
+          _instance
+            .tokenize()
+            .then(function (payload) {
+              console.log("venmo payload is: ", payload);
+              log.innerText = JSON.stringify(payload, null, 2);
+            })
+            .catch(function (tokenizeErr) {
+              // Handle flow errors or premature flow closure
+              switch (tokenizeErr.code) {
+                case "VENMO_APP_CANCELED":
+                  console.log("User canceled Venmo flow.");
+                  break;
+                case "VENMO_CANCELED":
+                  console.log(
+                    "User canceled Venmo, or Venmo app is not available."
+                  );
+                  break;
+                default:
+                  console.error("Error!", tokenizeErr);
+              }
+              log.innerText = tokenizeErr.message;
+            })
+            .then(function () {
+              venmoButton.removeAttribute("disabled");
+            })
+            .finally(function () {
+              // Since we had a successful venmo launch, call-back the parent page to let them know name of user launch venmo:
+              // window.xprops.onVenmoLaunch(venmoName);
+              // window.xprops.close();
 
-            _instance && _instance
-                .tokenize()
-                .then(function (payload) {
-                    console.log('venmo payload is: ', payload);
-                    log.innerText = JSON.stringify(payload, null, 2);
-                })
-                .catch(function (tokenizeErr) {
-                    // Handle flow errors or premature flow closure
-                    switch (tokenizeErr.code) {
-                        case 'VENMO_APP_CANCELED':
-                            console.log('User canceled Venmo flow.');
-                            break;
-                        case 'VENMO_CANCELED':
-                            console.log('User canceled Venmo, or Venmo app is not available.');
-                            break;
-                        default:
-                            console.error('Error!', tokenizeErr);
-                    }
-                    log.innerText = tokenizeErr.message;
-                })
-                .then(function () {
-                    venmoButton.removeAttribute('disabled');
-                })
-                .finally(function() {
-                    // Since we had a successful venmo launch, call-back the parent page to let them know name of user launch venmo:
-                    // window.xprops.onVenmoLaunch(venmoName);
-                    // window.xprops.close();
-
-                    // Hide the loading spinner
-                    document.querySelector('#spinner').style.display = 'none';
-                });
-        });
-    </script>
-
+              // Hide the loading spinner
+              document.querySelector("#spinner").style.display = "none";
+            });
+      });
+    }
+  </script>
 </body>
